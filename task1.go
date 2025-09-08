@@ -58,38 +58,38 @@ func createAndFillMat2d() IntMat2d {
 	return mat
 }
 
-func (r *IntArr1d) sortEven() {
-	size := len(*r)
+func (r IntArr1d) sortEven() {
+	size := len(r)
 
 	for i := 0; i < size; i += 2 {
 		for j := i + 2; j < size; j += 2 {
-			if (*r)[i] > (*r)[j] {
-				(*r)[i], (*r)[j] = (*r)[j], (*r)[i]
+			if r[i] > r[j] {
+				r[i], r[j] = r[j], r[i]
 			}
 		}
 	}
 }
 
-func (r *IntMat2d) reverseEven() {
-	size := len(*r)
+func (r IntMat2d) reverseEven() {
+	size := len(r)
 	for row := 0; row < size; row += 2 {
 		for i := 0; i < size/2; i++ {
-			(*r)[row][i], (*r)[row][size-i-1] = (*r)[row][size-i-1], (*r)[row][i]
+			r[row][i], r[row][size-i-1] = r[row][size-i-1], r[row][i]
 		}
 	}
 }
 
-func (r *IntArr1d) print() {
+func (r IntArr1d) print() {
 	fmt.Printf("Array: %v\n", r)
 }
 
-func (r *IntMat2d) print() {
-	size := len(*r)
+func (r IntMat2d) print() {
+	size := len(r)
 
 	fmt.Println("Matrix:")
 	for i := 0; i < size; i++ {
 		for j := 0; j < size; j++ {
-			fmt.Printf("%d ", (*r)[i][j])
+			fmt.Printf("%d ", r[i][j])
 		}
 		fmt.Println("")
 	}
