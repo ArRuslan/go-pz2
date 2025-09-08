@@ -5,7 +5,41 @@ import "fmt"
 type IntArr1d []int
 type IntMat2d []IntArr1d
 
-func createAndFillArray1d() IntArr1d {
+type IntStructure interface {
+	fill()
+	process()
+	print()
+}
+
+func (r IntArr1d) fill() {
+	var err error
+	size := len(r)
+
+	for i := 0; i < size; i++ {
+		fmt.Printf("Element %d: ", i)
+		_, err = fmt.Scanf("%d", &r[i])
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+func (r IntMat2d) fill() {
+	var err error
+	size := len(r)
+
+	for i := 0; i < size; i++ {
+		for j := 0; j < size; j++ {
+			fmt.Printf("Element [%d][%d]: ", i, j)
+			_, err = fmt.Scanf("%d", &r[i][j])
+			if err != nil {
+				panic(err)
+			}
+		}
+	}
+}
+
+func createArray1d() IntArr1d {
 	var arrSize uint
 	var err error
 
@@ -15,21 +49,10 @@ func createAndFillArray1d() IntArr1d {
 		panic(err)
 	}
 
-	arr := make(IntArr1d, arrSize)
-
-	var i uint
-	for i = 0; i < arrSize; i++ {
-		fmt.Printf("Element %d: ", i)
-		_, err = fmt.Scanf("%d", &arr[i])
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	return arr
+	return make(IntArr1d, arrSize)
 }
 
-func createAndFillMat2d() IntMat2d {
+func createMat2d() IntMat2d {
 	var matSize uint
 	var err error
 
@@ -40,25 +63,14 @@ func createAndFillMat2d() IntMat2d {
 	}
 
 	mat := make(IntMat2d, matSize)
-
 	var i uint
 	for i = 0; i < matSize; i++ {
 		mat[i] = make(IntArr1d, matSize)
-
-		var j uint
-		for j = 0; j < matSize; j++ {
-			fmt.Printf("Element [%d][%d]: ", i, j)
-			_, err = fmt.Scanf("%d", &mat[i][j])
-			if err != nil {
-				panic(err)
-			}
-		}
 	}
-
 	return mat
 }
 
-func (r IntArr1d) sortEven() {
+func (r IntArr1d) process() {
 	size := len(r)
 
 	for i := 0; i < size; i += 2 {
@@ -70,7 +82,7 @@ func (r IntArr1d) sortEven() {
 	}
 }
 
-func (r IntMat2d) reverseEven() {
+func (r IntMat2d) process() {
 	size := len(r)
 	for row := 0; row < size; row += 2 {
 		for i := 0; i < size/2; i++ {
@@ -102,22 +114,27 @@ func (r IntMat2d) print() {
 /* одновимірний масив: Відсортувати за зростанням лише парні елементи масиву */
 /* двовимірний масив: Перевернути всі парні рядки матриці */
 func main() {
-	arr := createAndFillArray1d()
+	var s IntStructure
+	s = createArray1d()
+	s.fill()
 
 	fmt.Printf("Array before sorting: ")
-	arr.print()
+	s.print()
 
-	arr.sortEven()
+	s.process()
 
 	fmt.Printf("Array after sorting: ")
-	arr.print()
+	s.print()
 
-	mat := createAndFillMat2d()
+	/* ************************* */
+
+	s = createMat2d()
+	s.fill()
 	fmt.Printf("Matrix before reversing: ")
-	mat.print()
+	s.print()
 
-	mat.reverseEven()
+	s.process()
 
 	fmt.Printf("Matrix after reversing: ")
-	mat.print()
+	s.print()
 }
