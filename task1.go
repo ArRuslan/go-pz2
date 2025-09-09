@@ -1,6 +1,24 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
+
+func readInt(prompt string) int {
+	var num int
+
+	for true {
+		fmt.Printf(prompt)
+		_, err := fmt.Scanf("%d", &num)
+		if err != nil {
+			fmt.Printf("Invalid number: %s\n", err)
+			continue
+		}
+		break
+	}
+
+	return num
+}
 
 type IntArr1d []int
 type IntMat2d []IntArr1d
@@ -12,59 +30,33 @@ type IntStructure interface {
 }
 
 func (r IntArr1d) fill() {
-	var err error
 	size := len(r)
 
 	for i := 0; i < size; i++ {
-		fmt.Printf("Element %d: ", i)
-		_, err = fmt.Scanf("%d", &r[i])
-		if err != nil {
-			panic(err)
-		}
+		r[i] = readInt(fmt.Sprintf("Element %d: ", i))
 	}
 }
 
 func (r IntMat2d) fill() {
-	var err error
 	size := len(r)
 
 	for i := 0; i < size; i++ {
 		for j := 0; j < size; j++ {
-			fmt.Printf("Element [%d][%d]: ", i, j)
-			_, err = fmt.Scanf("%d", &r[i][j])
-			if err != nil {
-				panic(err)
-			}
+			r[i][j] = readInt(fmt.Sprintf("Element [%d][%d]: ", i, j))
 		}
 	}
 }
 
 func createArray1d() IntArr1d {
-	var arrSize uint
-	var err error
-
-	fmt.Printf("Array length: ")
-	_, err = fmt.Scanf("%d", &arrSize)
-	if err != nil {
-		panic(err)
-	}
-
+	arrSize := readInt("Array length: ")
 	return make(IntArr1d, arrSize)
 }
 
 func createMat2d() IntMat2d {
-	var matSize uint
-	var err error
-
-	fmt.Printf("Square matrix size: ")
-	_, err = fmt.Scanf("%d", &matSize)
-	if err != nil {
-		panic(err)
-	}
+	matSize := readInt("Square matrix size: ")
 
 	mat := make(IntMat2d, matSize)
-	var i uint
-	for i = 0; i < matSize; i++ {
+	for i := 0; i < matSize; i++ {
 		mat[i] = make(IntArr1d, matSize)
 	}
 	return mat
