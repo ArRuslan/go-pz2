@@ -1,22 +1,93 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"math"
 )
 
 type Person struct {
-	fullName string
+	fullName [3]string
 	address  string
 	birthday string
 }
 
-func printPersonInfo(name string, address string, birthDate string) {
+var argErr = errors.New("expected at least one argument")
+
+func printPersonInfoExplicit(name, address, birthDate string) {
 	fmt.Printf("Name: %s, Address: %s, Birth Date: %s\n", name, address, birthDate)
 }
 
-func (s Person) PrintInfo() {
-	fmt.Printf("Name: %s, Address: %s, Birth Date: %s\n", s.fullName, s.address, s.birthday)
+func printPersonInfoImplicit(info ...string) {
+	if len(info) == 0 {
+		return
+	}
+	if len(info) > 0 {
+		fmt.Printf("Name: %s", info[0])
+	}
+	if len(info) > 1 {
+		fmt.Printf("Address: %s", info[1])
+	}
+	if len(info) > 2 {
+		fmt.Printf("Birth Date: %s", info[2])
+	}
+	fmt.Print("\n")
+}
+
+// TODO: частина параметрів задана явно, а частина не явно
+
+func printPersonFullName(p Person) {
+	lastName := p.fullName[0]
+	firstName := p.fullName[1]
+	middleName := p.fullName[2]
+
+	if lastName == "" {
+		lastName = "DefaultLastName"
+	}
+	if firstName == "" {
+		firstName = "DefaultFirstName"
+	}
+	if middleName == "" {
+		middleName = "DefaultMiddleName"
+	}
+
+	fmt.Printf("Full name: %s %s %s\n", lastName, firstName, middleName)
+}
+
+func minFunc(nums ...int) (int, error) {
+	if len(nums) == 0 {
+		return 0, argErr
+	}
+
+	minNum := nums[0]
+	for _, num := range nums {
+		if num < minNum {
+			minNum = num
+		}
+	}
+
+	return minNum, nil
+}
+
+type IAverage interface {
+	average() (int, error)
+}
+
+func (r IntArr1d) average() (int, error) {
+	if len(r) == 0 {
+		return 0, argErr
+	}
+
+	sum := 0
+	for _, num := range r {
+		sum += num
+	}
+
+	return sum / len(r), nil
+}
+
+func (e Person) average() (int, error) {
+	return -1, nil // TODO
 }
 
 /*
@@ -45,7 +116,7 @@ while N ≤ NMAX do // limit iterations to prevent infinite loop
 end while
 Output("Method failed.") // max number of steps exceeded
 */
-func solveTs(eqFunc func(float64) float64, a float64, b float64, precision float64, maxIters int) float64 {
+func solveEquation(eqFunc func(float64) float64, a, b, precision float64, maxIters int) float64 {
 	if !(a < b) {
 		panic("Check failed: a < b")
 	}
@@ -89,5 +160,5 @@ func equationFunc(x float64) float64 {
 Точное значение: 2.2985 */
 
 func main() {
-	fmt.Printf("Result: %.4f", solveTs(equationFunc, 2, 3, 0.0001, 25))
+	fmt.Printf("Result: %.4f", solveEquation(equationFunc, 2, 3, 0.0001, 25))
 }
