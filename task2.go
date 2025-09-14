@@ -34,7 +34,12 @@ func printPersonInfoImplicit(info ...string) {
 	fmt.Print("\n")
 }
 
-// TODO: частина параметрів задана явно, а частина не явно
+func printPersonInfoExplicitAndImplicit(name, address string, birthDate ...string) {
+	fmt.Printf("Name: %s, Address: %s\n", name, address)
+	if len(birthDate) > 1 {
+		fmt.Printf(", Birth Date: %s", birthDate[0])
+	}
+}
 
 func printPersonFullName(p Person) {
 	lastName := p.fullName[0]
