@@ -1,10 +1,16 @@
 package main
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"math"
+	"math/rand"
+	"os"
 )
+
+type IntArr []int
+type IntMat []IntArr
 
 type Person struct {
 	fullName [3]string
@@ -23,28 +29,38 @@ func printPersonInfoImplicit(info ...string) {
 		return
 	}
 	if len(info) > 0 {
-		fmt.Printf("Name: %s", info[0])
+		fmt.Printf("Name: \"%s\", ", info[0])
 	}
 	if len(info) > 1 {
-		fmt.Printf("Address: %s", info[1])
+		fmt.Printf("Address: \"%s\", ", info[1])
 	}
 	if len(info) > 2 {
-		fmt.Printf("Birth Date: %s", info[2])
+		fmt.Printf("Birth Date: \"%s\", ", info[2])
 	}
 	fmt.Print("\n")
 }
 
 func printPersonInfoExplicitAndImplicit(name, address string, birthDate ...string) {
-	fmt.Printf("Name: %s, Address: %s\n", name, address)
-	if len(birthDate) > 1 {
+	fmt.Printf("Name: %s, Address: %s", name, address)
+	if len(birthDate) > 0 {
 		fmt.Printf(", Birth Date: %s", birthDate[0])
 	}
+	fmt.Println()
 }
 
-func printPersonFullName(p Person) {
-	lastName := p.fullName[0]
-	firstName := p.fullName[1]
-	middleName := p.fullName[2]
+func printPersonFullName(fullName ...string) {
+	lastName := ""
+	if len(fullName) > 0 {
+		lastName = fullName[0]
+	}
+	firstName := ""
+	if len(fullName) > 1 {
+		firstName = fullName[1]
+	}
+	middleName := ""
+	if len(fullName) > 2 {
+		middleName = fullName[2]
+	}
 
 	if lastName == "" {
 		lastName = "DefaultLastName"
@@ -56,7 +72,7 @@ func printPersonFullName(p Person) {
 		middleName = "DefaultMiddleName"
 	}
 
-	fmt.Printf("Full name: %s %s %s\n", lastName, firstName, middleName)
+	fmt.Printf("Full name: \"%s\" \"%s\" \"%s\"\n", lastName, firstName, middleName)
 }
 
 func minFunc(nums ...int) (int, error) {
@@ -74,11 +90,7 @@ func minFunc(nums ...int) (int, error) {
 	return minNum, nil
 }
 
-type IAverage interface {
-	average() (int, error)
-}
-
-func (r IntArr1d) average() (int, error) {
+func (r IntArr) average() (int, error) {
 	if len(r) == 0 {
 		return 0, argErr
 	}
@@ -91,8 +103,21 @@ func (r IntArr1d) average() (int, error) {
 	return sum / len(r), nil
 }
 
-func (e Person) average() (int, error) {
-	return -1, nil // TODO
+func (r IntMat) average() (int, error) {
+	if len(r) == 0 || len(r[0]) == 0 {
+		return 0, argErr
+	}
+
+	sum := 0
+	count := 0
+	for _, row := range r {
+		count += len(row)
+		for _, num := range row {
+			sum += num
+		}
+	}
+
+	return sum / count, nil
 }
 
 /*
@@ -165,5 +190,89 @@ func equationFunc(x float64) float64 {
 Точное значение: 2.2985 */
 
 func main() {
-	fmt.Printf("Result: %.4f", solveEquation(equationFunc, 2, 3, 0.0001, 25))
+	var err error
+	var person Person
+
+	scanner := bufio.NewScanner(os.Stdin)
+
+	fmt.Printf("Person first name: ")
+	if !scanner.Scan() && scanner.Err() != nil {
+		panic(scanner.Err())
+	}
+	person.fullName[0] = scanner.Text()
+
+	fmt.Printf("Person last name: ")
+	if !scanner.Scan() && scanner.Err() != nil {
+		panic(scanner.Err())
+	}
+	person.fullName[1] = scanner.Text()
+
+	fmt.Printf("Person middle name: ")
+	if !scanner.Scan() && scanner.Err() != nil {
+		panic(scanner.Err())
+	}
+	person.fullName[2] = scanner.Text()
+
+	fmt.Printf("Person address: ")
+	if !scanner.Scan() && scanner.Err() != nil {
+		panic(scanner.Err())
+	}
+	person.address = scanner.Text()
+
+	fmt.Printf("Person birthday: ")
+	if !scanner.Scan() && scanner.Err() != nil {
+		panic(scanner.Err())
+	}
+	person.birthday = scanner.Text()
+
+	fmt.Print("Person info (явно): ")
+	printPersonInfoExplicit(person.fullName[0], person.address, person.birthday)
+
+	fmt.Print("Person info (неявно): ")
+	printPersonInfoImplicit(person.fullName[0], person.address, person.birthday)
+
+	fmt.Print("Person info (явно/неявно): ")
+	printPersonInfoExplicitAndImplicit(person.fullName[0], person.address)
+
+	fmt.Print("Person info (явно/неявно): ")
+	printPersonInfoExplicitAndImplicit(person.fullName[0], person.address, person.birthday)
+
+	fmt.Print("Person name (default arguments): ")
+	printPersonFullName(person.fullName[:]...)
+
+	min_, _ := minFunc(54, 26, 87, 11, 99)
+	fmt.Printf("Minimal number between (54, 26, 87, 11, 99): %d\n", min_)
+
+	arr := make(IntArr, 10)
+	for i := 0; i < len(arr); i++ {
+		arr[i] = rand.Intn(128)
+	}
+
+	fmt.Printf("Array: %v\n", arr)
+
+	avg, err := arr.average()
+	if err == nil {
+		fmt.Printf("Average of array is %d\n", avg)
+	} else {
+		fmt.Printf("Failed to calculate average of array: %s\n", err)
+	}
+
+	mat := make(IntMat, 3)
+	for i := 0; i < len(mat); i++ {
+		mat[i] = make(IntArr, len(mat))
+		for j := 0; j < len(mat[i]); j++ {
+			mat[i][j] = rand.Intn(128)
+		}
+	}
+
+	fmt.Printf("Matrix: %v\n", mat)
+
+	avg, err = mat.average()
+	if err == nil {
+		fmt.Printf("Average of matrix is %d\n", avg)
+	} else {
+		fmt.Printf("Failed to calculate average of matrix: %s\n", err)
+	}
+
+	fmt.Printf("Result of equation: %.4f", solveEquation(equationFunc, 2, 3, 0.0001, 25))
 }
