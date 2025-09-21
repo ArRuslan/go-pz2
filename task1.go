@@ -99,6 +99,42 @@ func (r IntMat2d) print() {
 	}
 }
 
+func taskArr(arr IntArr1d) {
+	arr.fill()
+
+	fmt.Printf("Array before sorting: ")
+	arr.print()
+
+	arr.process()
+
+	fmt.Printf("Array after sorting: ")
+	arr.print()
+}
+
+func taskMat(mat IntMat2d) {
+	mat.fill()
+
+	fmt.Printf("Matrix before reversing: ")
+	mat.print()
+
+	mat.process()
+
+	fmt.Printf("Matrix after reversing: ")
+	mat.print()
+}
+
+func taskInterface(str IntStructure) {
+	str.fill()
+
+	fmt.Printf("Array/Matrix before processing: ")
+	str.print()
+
+	str.process()
+
+	fmt.Printf("Array/Matrix after processing: ")
+	str.print()
+}
+
 /* Введення, виведення вихідних даних та їх обробку здійснити у вигляді функцій. Врахувати ситуації помилок і панік */
 /* Написати програму обробки одно- та двовимірного масивів. Використовувати методи та функції.
 а) Написати перевизначені методи. Написати демонстраційну програму для виклику цих методів.
@@ -106,27 +142,16 @@ func (r IntMat2d) print() {
 /* одновимірний масив: Відсортувати за зростанням лише парні елементи масиву */
 /* двовимірний масив: Перевернути всі парні рядки матриці */
 func main() {
-	var s IntStructure
-	s = createArray1d()
-	s.fill()
+	fmt.Println("Using methods:")
 
-	fmt.Printf("Array before sorting: ")
-	s.print()
+	arr := createArray1d()
+	taskArr(arr)
 
-	s.process()
+	mat := createMat2d()
+	taskMat(mat)
 
-	fmt.Printf("Array after sorting: ")
-	s.print()
+	fmt.Println("Using interface:")
 
-	/* ************************* */
-
-	s = createMat2d()
-	s.fill()
-	fmt.Printf("Matrix before reversing: ")
-	s.print()
-
-	s.process()
-
-	fmt.Printf("Matrix after reversing: ")
-	s.print()
+	taskInterface(arr)
+	taskInterface(mat)
 }
